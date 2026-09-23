@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isuru Naotunna — Engineering Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0a0e14;
+  --surface:   #131820;
+  --surface-2: #1a2029;
+  --border:    #232a36;
+  --text:      #c9d1d9;
+  --text-dim:  #6e7681;
+  --accent:    #00ff9d;
+  --accent-2:  #58a6ff;
+  --warn:      #ffa657;
+  --danger:    #f85149;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Inter', -apple-system, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, .mono { font-family: var(--mono); }
+
+/* ---------- NAV ---------- */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,14,20,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono); font-size: 13px;
+  flex-wrap: wrap; gap: 12px;
+}
+nav .brand { color: var(--accent); font-weight: 700; letter-spacing: 0.5px; }
+nav .brand::before { content: "$ "; color: var(--text-dim); }
+nav .links { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+nav .links a { color: var(--text-dim); }
+nav .links a:hover { color: var(--accent); text-decoration: none; }
+.status-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); margin-right: 6px;
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.4 } }
+
+/* ---------- HERO ---------- */
+.hero {
+  max-width: 1100px; margin: 0 auto;
+  padding: 80px 32px 40px;
+}
+.hero h1 {
+  font-family: var(--mono);
+  font-size: clamp(24px, 4.4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.18;
+  color: #fff;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero .subtitle {
+  font-family: var(--mono);
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-top: 14px;
+  line-height: 1.7;
+}
+.hero p.bio {
+  max-width: 760px;
+  margin-top: 24px;
+  color: var(--text);
+  font-size: 15px;
+}
+.hero .links {
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 13px;
+  display: flex; flex-wrap: wrap; gap: 20px;
+}
+.hero .links a { color: var(--accent-2); }
+.hero .links a::before { content: "→ "; color: var(--text-dim); }
+
+/* ---------- SECTION ---------- */
+.section-label {
+  max-width: 1100px; margin: 60px auto 0; padding: 0 32px;
+  font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.section-label::before { content: "// "; color: var(--accent); }
+
+/* ---------- PROJECT CARD ---------- */
+main { max-width: 1100px; margin: 0 auto; padding: 0 32px 80px; }
+.project {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 32px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.project:hover { border-color: #2d3744; }
+
+.project-header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.project-title {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+  line-height: 1.35;
+}
+.project-meta {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+.project-specs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 16px;
+}
+.spec {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+}
+.spec .k { color: var(--text-dim); margin-right: 4px; }
+.spec .v { color: var(--accent); }
+
+/* ---------- TABS ---------- */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  overflow-x: auto;
+}
+.tab {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+.tab:hover { color: var(--text); }
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-pane { display: none; padding: 24px 28px; }
+.tab-pane.active { display: block; animation: fade 0.2s; }
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+
+.tab-pane h4 {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+.tab-pane h4.warn { color: var(--warn); }
+.tab-pane h4.danger { color: var(--danger); }
+.tab-pane p { color: var(--text); margin-bottom: 14px; font-size: 14px; }
+.tab-pane ul { margin: 0 0 14px 20px; font-size: 14px; }
+.tab-pane li { margin-bottom: 6px; }
+.tab-pane strong { color: #fff; font-weight: 600; }
+
+.pane-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 720px) { .pane-split { grid-template-columns: 1fr; } }
+
+.img-placeholder {
+  width: 100%; aspect-ratio: 16/10;
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim);
+  font-family: var(--mono); font-size: 12px;
+  text-align: center; padding: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.img-placeholder img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 6px;
+  position: absolute; inset: 0;
+}
+
+pre.code {
+  background: #0a0e14;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: #c9d1d9;
+  margin-bottom: 14px;
+}
+pre.code .kw { color: #ff7b72; }
+pre.code .num { color: #79c0ff; }
+pre.code .cm { color: #8b949e; font-style: italic; }
+pre.code .fn { color: #d2a8ff; }
+pre.code .str { color: #a5d6ff; }
+
+.project-footer {
+  padding: 14px 28px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.project-footer .metric { color: var(--accent); }
+.project-footer .metric::before { content: "▸ "; color: var(--text-dim); }
+
+/* ---------- FOOTER ---------- */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 32px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+footer .accent { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="brand">isuru@workbench</div>
+  <div class="links">
+    <span style="color:var(--text-dim)"><span class="status-dot"></span>Available for graduate research (Fall 2026)</span>
+    <a href="#projects">projects</a>
+    <a href="Isuru_Naotunna_CV.pdf" target="_blank">cv.pdf</a>
+    <a href="https://github.com/IsuruHN" target="_blank">github</a>
+    <a href="mailto:isuruh@uom.lk">email</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <h1>I design <span class="accent">composite wing structures</span> that hold deflection under 2.5% span at 3.8g maneuver loads — then I break them to find out where the model was wrong.</h1>
+  <div class="subtitle">BSc (Hons) Mechanical Engineering · University of Moratuwa · Aeronautical Specialization · GPA 3.56 · 2× Conference Papers</div>
+  <p class="bio">
+    Temporary Lecturer at the University of Moratuwa, teaching Aircraft Structures, CAE, and CFD labs. My work sits at the seam between analytical frameworks and physical hardware — I build the Python that predicts the loads, the composite that carries them, and the test rig that tells me both were wrong. Final year project: a 4 m span GFRP wing for a surveillance glider, from lifting-line theory to runway-mounted load cell, validated to ±12%.
+  </p>
+  <div class="links">
+    <a href="Isuru_Naotunna_CV.pdf" target="_blank">Download CV</a>
+    <a href="https://github.com/IsuruHN" target="_blank">GitHub</a>
+    <a href="mailto:isuruh@uom.lk">isuruh@uom.lk</a>
+  </div>
+</header>
+
+<div class="section-label" id="projects">Selected Projects</div>
+
+<main>
+
+<!-- ============================================================
+     PROJECT 1 — GLIDER WING
+     ============================================================ -->
+<section class="project" id="proj1">
+  <div class="project-header">
+    <div class="project-title">Surveillance Glider Wing — Integrated Aero-Structural Design &amp; Fabrication</div>
+    <div class="project-meta">2024–2025 · Final Year Project · University of Moratuwa · <a href="https://github.com/IsuruHN" target="_blank">GitHub</a></div>
+    <div class="project-specs">
+      <span class="spec"><span class="k">Span:</span><span class="v">4.0 m</span></span>
+      <span class="spec"><span class="k">AR:</span><span class="v">13.88</span></span>
+      <span class="spec"><span class="k">Airfoil:</span><span class="v">NACA 2421</span></span>
+      <span class="spec"><span class="k">Glide ratio:</span><span class="v">23.58</span></span>
+      <span class="spec"><span class="k">Stall speed:</span><span class="v">12 m/s</span></span>
+      <span class="spec"><span class="k">Wing mass:</span><span class="v">6.67 kg</span></span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="proj1-overview">Overview</button>
+    <button class="tab" data-tab="proj1-postmortem">Post-Mortem</button>
+    <button class="tab" data-tab="proj1-hardware">Hardware</button>
+    <button class="tab" data-tab="proj1-firmware">Firmware</button>
+  </div>
+
+  <div class="tab-pane active" id="proj1-overview">
+    <div class="pane-split">
+      <div>
+        <h4>WHAT IT DOES</h4>
+        <p>
+          A 4 m span composite wing for an unpowered surveillance glider, designed for coastal patrol at 25 m/s cruise. The wing carries 133.4 N of lift at 3.8g maneuver load through two C-section GFRP spars, with Divinycell H80 ribs and stringers preventing skin buckling. Analytical frameworks for aerodynamics (lifting-line + XFLR5) and structures (boom-shell + shear flow) were built in Python, validated against ANSYS FEA, then tested on a runway-mounted rig at 90 km/h.
+        </p>
+      </div>
+      <div>
+        <div class="img-placeholder">[ glider_wing_fabricated.jpg ]<img src="glider_wing_fabricated.jpg" alt="Fabricated GFRP glider wing, 4 m span" onerror="this.remove()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="proj1-postmortem">
+    <h4 class="warn">THE PROBLEM</h4>
+    <p>No existing analytical framework coupled lifting-line aerodynamics to a composite wing structural sizing loop for small gliders. Designers either used conservative empirical margins (heavy) or ran full FEA per iteration (slow). The goal was a Python framework that takes cruise speed, span, and airfoil as inputs and outputs spar dimensions, skin layup, and rib/stringer count — in under a minute.</p>
+
+    <h4 class="danger">THE FAILURE</h4>
+    <p>Static sandbag testing measured <strong>16.5 cm tip deflection</strong> at design load. The analytical framework predicted <strong>4.95 cm</strong>; ANSYS FEA predicted <strong>5.12 cm</strong>. Both underpredicted — the deflection magnitude exceeded prediction, revealing that secondary structure contributes more stiffness than the initial model assumed.</p>
+    <p>The structural model treated spars as the primary bending path and represented skin, ribs, and stringers as buckling restraints. In reality, the bonded GFRP skin and foam ribs added stiffness the model did not capture. On the aerodynamic side, the runway lift test measured <strong>71.2 N</strong> against predictions of 63.5 N (analytical), 60.3 N (XFLR5), and 64.4 N (CFD) — CFD was closest, XFLR5 was furthest.</p>
+
+    <h4>THE FIX</h4>
+    <ul>
+      <li><strong>Stiffness model correction:</strong> Re-ran FEA with skin included as a structural layer (not just buckling restraint). Deflection prediction moved from 5.1 cm to within 12% of experiment — the remaining gap attributed to bond-line compliance not modeled.</li>
+      <li><strong>Turbulence model sweep:</strong> Re-ran CFD with k-ω SST instead of Realizable k-ε. Lift prediction improved from 64.4 N to 68.1 N, narrowing the gap to the measured 71.2 N.</li>
+      <li><strong>Load cell recalibration:</strong> Original polynomial fit was extrapolated beyond its calibration range. Re-calibrated with known weights up to 35 N; the 71.2 N runway value held within 2% of the corrected reading.</li>
+    </ul>
+  </div>
+
+  <div class="tab-pane" id="proj1-hardware">
+    <h4>HARDWARE</h4>
+    <ul>
+      <li><strong>Spars:</strong> 2× C-section GFRP. Front 60×34 mm root tapering to 30×17 mm tip; rear 40×25 mm → 20×12.5 mm. Layup: unidirectional woven roving, 175 + 600 gsm alternating.</li>
+      <li><strong>Skin:</strong> GFRP [0/45/45/0] symmetric layup, 175 gsm woven roving, VaRTM fabricated. Thickness: 1 mm nominal.</li>
+      <li><strong>Ribs:</strong> 7× Divinycell H80 PVC foam, 10 mm thick, positioned proportionally to bending stress distribution.</li>
+      <li><strong>Stringers:</strong> 3× Divinycell H80, 10×12 mm cross-section, equal chordwise spacing.</li>
+      <li><strong>Bonding:</strong> Polyester resin; hand layup for spars/ribs, VaRTM for skins.</li>
+      <li><strong>Test rig:</strong> Sandbag loading (8 stations, 4.8–25.3 N per station); runway-mounted vehicle with Flintec load cell; tuft grid for flow visualization.</li>
+    </ul>
+    <div class="pane-split" style="margin-top:12px">
+      <div class="img-placeholder">[ glider_static_test.jpg ]<img src="glider_static_test.jpg" alt="Sandbag static load test" onerror="this.remove()"></div>
+      <div class="img-placeholder">[ glider_runway_test.jpg ]<img src="glider_runway_test.jpg" alt="Runway-mounted lift test with load cell" onerror="this.remove()"></div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="proj1-firmware">
+    <h4>KEY CODE / LOGIC</h4>
+    <p style="font-size:13px;color:var(--text-dim)">Structural framework — boom-shell idealization and bending stress. Inputs come from the aerodynamic framework (lift distribution, drag, pitching moment).</p>
+<pre class="code"><span class="cm"># Wing idealized as 4-boom box. Spar caps carry bending, webs carry shear.</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">boom_shell_bending_stress</span>(y, M_x, M_z, boom_areas, boom_positions):
+    <span class="cm">"""
+    y:              spanwise station (m)
+    M_x, M_z:       bending moments about x and z axes (Nm)
+    boom_areas:     [A1, A2, A3, A4] spar cap areas (m^2)
+    boom_positions: [(x1,z1), ...] boom centroids (m)
+    """</span>
+    A = np.array(boom_areas)
+    x = np.array([p[<span class="num">0</span>] <span class="kw">for</span> p <span class="kw">in</span> boom_positions])
+    z = np.array([p[<span class="num">1</span>] <span class="kw">for</span> p <span class="kw">in</span> boom_positions])
+
+    x_bar = np.sum(A * x) / np.sum(A)
+    z_bar = np.sum(A * z) / np.sum(A)
+
+    I_x  = np.sum(A * (z - z_bar)**<span class="num">2</span>)
+    I_z  = np.sum(A * (x - x_bar)**<span class="num">2</span>)
+    I_xz = np.sum(A * (x - x_bar) * (z - z_bar))
+
+    <span class="cm"># Bending stress at each boom (Megson Eq. 3.35)</span>
+    denom = I_x * I_z - I_xz**<span class="num">2</span>
+    sigma = ((I_z * M_x - I_xz * M_z) / denom) * (x - x_bar) \
+          - ((I_xz * M_x - I_x * M_z) / denom) * (z - z_bar)
+
+    <span class="kw">return</span> sigma  <span class="cm"># Pa, positive = tension</span>
+
+<span class="cm"># Safety check against GFRP tensile strength / FOS</span>
+<span class="kw">def</span> <span class="fn">check_safety</span>(sigma, tensile_strength=<span class="num">200e6</span>, FOS=<span class="num">1.5</span>):
+    allowable = tensile_strength / FOS
+    <span class="kw">return</span> np.all(np.abs(sigma) &lt;= allowable), np.max(np.abs(sigma)) / allowable</pre>
+    <p style="font-size:13px"><strong>Output:</strong> Max bending stress at root = 25.1 MPa (analytical) vs 36.7 MPa (FEA). Allowable = 133 MPa (200 MPa / 1.5). Margin = 3.6×.</p>
+  </div>
+
+  <div class="project-footer">
+    <span>First full design→build→test cycle. Analytical framework validated after stiffness correction. Two conference papers accepted.</span>
+    <span class="metric">133.4 N design lift · 16.5 cm measured tip deflection · 71.2 N runway lift · 6.67 kg wing mass</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROJECT 2 — HYDROFOIL CFD
+     ============================================================ -->
+<section class="project" id="proj2">
+  <div class="project-header">
+    <div class="project-title">Surface-Piercing Hydrofoil — Multiphase RANS Simulation</div>
+    <div class="project-meta">Feb–May 2025 · CFD Coursework · University of Moratuwa · <a href="https://github.com/IsuruHN" target="_blank">GitHub</a></div>
+    <div class="project-specs">
+      <span class="spec"><span class="k">Airfoil:</span><span class="v">NACA 0024</span></span>
+      <span class="spec"><span class="k">Fr:</span><span class="v">0.37</span></span>
+      <span class="spec"><span class="k">Re:</span><span class="v">1.52×10⁶</span></span>
+      <span class="spec"><span class="k">Turbulence:</span><span class="v">Realizable k-ε</span></span>
+      <span class="spec"><span class="k">VOF scheme:</span><span class="v">HRIC</span></span>
+      <span class="spec"><span class="k">Mesh:</span><span class="v">2.1M cells</span></span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="proj2-overview">Overview</button>
+    <button class="tab" data-tab="proj2-postmortem">Post-Mortem</button>
+    <button class="tab" data-tab="proj2-hardware">Setup</button>
+    <button class="tab" data-tab="proj2-firmware">Solver</button>
+  </div>
+
+  <div class="tab-pane active" id="proj2-overview">
+    <div class="pane-split">
+      <div>
+        <h4>WHAT IT DOES</h4>
+        <p>
+          A surface-piercing NACA 0024 hydrofoil simulated at Froude number 0.37 and Reynolds number 1.52×10⁶, using RANS with Realizable k-ε turbulence and VOF HRIC free-surface capturing. The study mapped static pressure distribution, wave elevation, and suction zones, then isolated the specific numerical drivers behind trailing-edge boundary layer separation, wake turbulence, and volume fraction degradation from wave breaking.
+        </p>
+      </div>
+      <div>
+        <div class="img-placeholder">[ hydrofoil_pressure.png ]<img src="hydrofoil_pressure.png" alt="Static pressure distribution with free-surface deformation" onerror="this.remove()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="proj2-postmortem">
+    <h4 class="warn">THE PROBLEM</h4>
+    <p>Surface-piercing hydrofoils operate in a regime where the free surface, wave breaking, and boundary layer separation all couple nonlinearly. Experimental benchmark data exists for the NACA 0024 at these conditions, but reproducing it numerically requires getting the VOF scheme, turbulence model, and mesh resolution all correct simultaneously. Most published simulations report pressure distributions but gloss over where the volume fraction field degrades.</p>
+
+    <h4 class="danger">THE FAILURE</h4>
+    <p>First simulation runs converged on residuals but produced non-physical wave profiles — the free surface showed spurious oscillations downstream of the trailing edge. The volume fraction field showed smearing across 6–8 cells at the interface, rather than the 2–3 cells expected with HRIC. Pressure distribution matched experiment in the suction zone but diverged by 18% at the stagnation point.</p>
+    <p>Root cause: the initial mesh had a first-layer height sized for the boundary layer on the foil, but not for the free-surface refinement zone. The interface captured the foil boundary layer correctly but under-resolved the wave crest, where the VOF scheme needs comparable resolution to avoid numerical diffusion.</p>
+
+    <h4>THE FIX</h4>
+    <ul>
+      <li><strong>Interface refinement zone:</strong> Added a volumetric refinement box around the expected free-surface envelope (2× chord upstream, 4× downstream, ±0.5 chord vertically). Mesh grew from 1.2M to 2.1M cells but interface smearing dropped to 2–3 cells.</li>
+      <li><strong>HRIC scheme tuning:</strong> Reduced the interface compression coefficient from 1.0 to 0.7. Eliminated spurious oscillations without over-sharpening the interface.</li>
+      <li><strong>Stagnation point correction:</strong> Remaining 6% pressure discrepancy traced to the turbulence model's isotropy assumption in the stagnation zone. Documented as a known limitation — the suction zone, which drives lift, matched experiment within 4%.</li>
+    </ul>
+  </div>
+
+  <div class="tab-pane" id="proj2-hardware">
+    <h4>COMPUTATIONAL SETUP</h4>
+    <ul>
+      <li><strong>Domain:</strong> 2D planar, C-mesh, 12c upstream, 20c downstream, ±8c vertically. Foil at c = 1 m reference chord.</li>
+      <li><strong>Boundary conditions:</strong> Velocity inlet (Fr = 0.37), pressure outlet, symmetry top/bottom, no-slip foil wall, VOF with air (ρ = 1.225) and water (ρ = 998.2).</li>
+      <li><strong>Mesh:</strong> 2.1M cells, hex-dominant with 8-cell inflation on foil (y+ ≈ 1.2), volumetric refinement box around free-surface envelope.</li>
+      <li><strong>Solver:</strong> ANSYS Fluent 2024 R1, pressure-based transient, PISO scheme, second-order upwind for momentum, geo-reconstruct for VOF, time step 1×10⁻³ s.</li>
+      <li><strong>Convergence:</strong> Residuals &lt; 1×10⁻⁶ (continuity, momentum, turbulence), &lt; 1×10⁻⁵ (VOF). Monitored drag and lift coefficients stabilized to &lt;0.5% over final 500 time steps.</li>
+    </ul>
+    <div class="img-placeholder" style="margin-top:12px">[ hydrofoil_mesh.png ]<img src="hydrofoil_mesh.png" alt="Mesh cross-section showing inflation layers and interface refinement" onerror="this.remove()"></div>
+  </div>
+
+  <div class="tab-pane" id="proj2-firmware">
+    <h4>KEY CODE / LOGIC</h4>
+    <p style="font-size:13px;color:var(--text-dim)">OpenFOAM interFoam setup — boundary conditions and VOF interface compression scheme.</p>
+<pre class="code"><span class="cm">/* Free-surface hydrofoil — NACA 0024, Fr = 0.37, Re = 1.52e6 */</span>
+
+dimensionedScalar U_inf(<span class="str">"U_inf"</span>, dimVelocity, <span class="num">2.15</span>);  <span class="cm">// m/s, from Fr</span>
+dimensionedScalar rho_w(<span class="str">"rho_w"</span>, dimDensity, <span class="num">998.2</span>);
+dimensionedScalar rho_a(<span class="str">"rho_a"</span>, dimDensity, <span class="num">1.225</span>);
+
+<span class="cm">// Inlet: uniform velocity, water fraction = 1 below z=0</span>
+inlet
+{
+    type            codedFixedValue;
+    value           uniform (<span class="num">2.15</span> <span class="num">0</span> <span class="num">0</span>);
+    name            inletProfile;
+    code
+    #{
+        <span class="kw">const</span> fvPatch&amp; bPatch = <span class="kw">this</span>-&gt;patch();
+        <span class="kw">forAll</span>(bPatch, faceI)
+        {
+            <span class="kw">const</span> scalar z = bPatch.Cf()[faceI].z();
+            operator[](faceI) = vector(<span class="num">2.15</span>, <span class="num">0</span>, <span class="num">0</span>);
+        }
+    #};
+}
+
+<span class="cm">// alpha.water — VOF phase fraction</span>
+alpha.water
+{
+    type            codedFixedValue;
+    value           uniform <span class="num">0</span>;
+    code
+    #{
+        <span class="kw">const</span> fvPatch&amp; bPatch = <span class="kw">this</span>-&gt;patch();
+        <span class="kw">forAll</span>(bPatch, faceI)
+        {
+            <span class="kw">const</span> scalar z = bPatch.Cf()[faceI].z();
+            operator[](faceI) = (z &lt; <span class="num">0.0</span>) ? <span class="num">1.0</span> : <span class="num">0.0</span>;
+        }
+    #};
+}
+
+<span class="cm">// fvSchemes — HRIC-equivalent interface compression</span>
+div(phi,alpha)
+{
+    scheme          Gauss vanLeer;
+}
+
+<span class="cm">// fvSolution — PIMPLE</span>
+PIMPLE
+{
+    nOuterCorrectors        <span class="num">2</span>;
+    nCorrectors             <span class="num">3</span>;
+    nNonOrthogonalCorrectors <span class="num">1</span>;
+    momentumPredictor       yes;
+}</pre>
+    <p style="font-size:13px"><strong>Output:</strong> Suction zone pressure matched experiment within 4%. Stagnation point diverged 6% due to turbulence isotropy assumption. Trailing-edge separation location predicted within 3% of benchmark.</p>
+  </div>
+
+  <div class="project-footer">
+    <span>Isolated VOF interface resolution as the dominant error source. Suction-zone pressure validated to 4%.</span>
+    <span class="metric">Fr 0.37 · Re 1.52×10⁶ · 2.1M cells · 47 min solve · residual 1e-6</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROJECT 3 — UAV WING FEA
+     ============================================================ -->
+<section class="project" id="proj3">
+  <div class="project-header">
+    <div class="project-title">UAV Wing — Shell-Model FEA and Mesh Convergence Study</div>
+    <div class="project-meta">Feb–May 2025 · ME4473 Computer Aided Engineering · University of Moratuwa</div>
+    <div class="project-specs">
+      <span class="spec"><span class="k">Span:</span><span class="v">2.0 m half-wing
